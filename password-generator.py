@@ -1,11 +1,19 @@
 import random
+import os
+from colorama import Fore as f_, init, Back
+
+### Initiation colorama ###
+init(autoreset=True)
 
 class Password_Generator:
 
     def __init__(self, password_length: int, list_lowercase: list, list_uppercase: list, asci: list):
 
         if password_length < 10:
-            print("He generado una contrasena con 10 caracteres de minimo.")
+
+            print(f"{f_.RED}Error: Las claves deben ser de un minimo de 10 digitos !!!{f_.RESET}")
+            print(f"{f_.CYAN}Igualmente te genere una clave, tiene 10 digitos de minimo.{f_.RESET}")
+
             self.password_length = 10
 
         else:
@@ -52,7 +60,7 @@ class Password_Generator:
 
             i += 1
         
-        return self._password_reset(password_list)
+        return f"\nClave: {f_.CYAN}{self._password_reset(password_list)}{f_.RESET}"
     
     def _password_reset(self, password):
 
@@ -85,10 +93,43 @@ special = [
     '`','~','#'
 ]
 
-length_password = int(input("Ingresa la longitud que quieres para la password: "))
+def clear_screen():
+### check operative system ###
+    if os.name == 'nt':
+        os.system('cls')
+    
+    else:
+        os.system('clear')
 
-### Creation object ###
-generator = Password_Generator(length_password, alphabet_lower, alphabet_upper, special)
+def main():
+    
+    clear_screen()
 
-### Generando una contrasena ###
-print(generator.password_creator())
+    while True:
+        print(f"\n{Back.RED}.:Bienvenid@ a \"Generator password\":.{Back.RESET}\n")
+        print(f"Presion {f_.MAGENTA}CTRL + C{f_.RESET} para salir del programa")
+        
+        try:
+            length_password = int(input("Ingresa la longitud que quieres para la password: "))
+
+            ### Creation object ###
+            generator = Password_Generator(length_password, alphabet_lower, alphabet_upper, special)
+            print(generator.password_creator())
+
+        except ValueError:
+            print(f"{f_.RED}Error: Caracter invalido !!!{f_.RESET}\n")
+        
+        input(f"{f_.BLUE}Al continuar se reiniciara la pantalla ...{f_.RESET}")
+        clear_screen()
+            
+        
+    
+
+
+try:
+    main()
+
+except KeyboardInterrupt:
+    print(f"\n{f_.CYAN}Gracias por usar 'Generator password'{f_.RESET}")
+        
+

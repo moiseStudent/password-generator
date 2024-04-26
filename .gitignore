@@ -1,0 +1,7 @@
+### Virtual envaironment ###
+
+bin/
+include/
+lib/
+
+*.cfg
