@@ -60,11 +60,11 @@ class Password_Generator:
 
             i += 1
         
-        return f"\nClave: {f_.CYAN}{self._password_reset(password_list)}{f_.RESET}"
+        return f"\nClave: {f_.CYAN}{self._password_reset(password_list)}{f_.RESET}"  
     
     def _password_reset(self, password):
 
-        password = str(password).replace('[',"").replace("'","").replace(",","")
+        password = str(password).replace('[',"").replace("'","").replace(",","")      
         password = password.replace(" ","").replace("]","")
 
         return password
