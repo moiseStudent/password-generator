@@ -1,13 +1,22 @@
 import random
 import os
 from colorama import Fore as f_, init, Back
+from constants import *
 
 ### Initiation colorama ###
 init(autoreset=True)
 
 class Password_Generator:
+    #* class variables
+    list_lowercase = ALPHABET_LOWER
+    list_uppercase = ALPHABET_UPPER
+    list_specialC = SPECIAL
 
-    def __init__(self, password_length: int, list_lowercase: list, list_uppercase: list, asci: list):
+    def __init__(self, password_length: int, uppercase: bool, special: bool, numbers: bool):
+
+        self.uppercase = uppercase
+        self.special = special
+        self.numbers = numbers
 
         if password_length < 10:
 
@@ -18,10 +27,6 @@ class Password_Generator:
 
         else:
             self.password_length = password_length
-
-        self.lower_case = list_lowercase
-        self.upper_case = list_uppercase
-        self.special_characters = asci
     
     def password_creator(self):
         password_list = []
@@ -34,64 +39,48 @@ class Password_Generator:
             ende se le resta uno "1" a las variables para poder generar un numero
             con "random.randint()" desde cero "0" hasta el limite de la lista.
             """
-            letter_lower = len(self.lower_case) - 1
+            
+            letter_lower = len(self.list_lowercase) - 1
             letter_lower = random.randint(0, letter_lower)
-
-            letter_upper = len(self.upper_case) - 1
+            
+            letter_upper = len(self.list_uppercase) - 1
             letter_upper = random.randint(0, letter_upper)
-
-            special_character = len(self.special_characters) - 1
+            
+            special_character = len(self.list_specialC) - 1
             special_character = random.randint(0, special_character)
 
             num_list = random.randint(1, 4)
-
+            
             ### Elije el caracter a agregar de forma aleatoria ###
             if num_list == 1:
-                password_list.append(self.lower_case[letter_lower])
+                password_list.append(self.list_lowercase[letter_lower])
             
-            elif num_list == 2:
-                password_list.append(self.upper_case[letter_upper])
+            elif num_list == 2 and self.uppercase:
+                password_list.append(self.list_uppercase[letter_upper])
             
-            elif num_list == 3:
-                password_list.append(self.special_characters[special_character])
-
-            elif num_list == 4:    
+            elif num_list == 3 and self.special:
+                password_list.append(self.list_specialC[special_character])
+                
+            elif num_list == 4 and self.numbers:    
                 password_list.append(random.randint(0,9))
-
+                
+            else:
+                password_list.append(self.list_lowercase[letter_lower])
             i += 1
         
-        return f"\nClave: {f_.CYAN}{self._password_reset(password_list)}{f_.RESET}"  
+        return f"\nClave: {f_.CYAN}{self.password_format(password_list)}{f_.RESET}"  
     
-    def _password_reset(self, password):
+    def password_format(self, password):
 
         password = str(password).replace('[',"").replace("'","").replace(",","")      
         password = password.replace(" ","").replace("]","")
 
         return password
 
-alphabet_lower = [
-    'a','b','c','d','e','f','g',
-    'h','i','j','k','l','m','n','o','p',
-    'q','r','s','t','u','v','w','x','y','z'
-    ]
 
-alphabet_upper = [
-    'A','B','C','D','E','F','G',
-    'H','I','J','K','L','M','N','O','P',
-    'Q','R','S','T','U','V','W','X','Y','Z'
-    ]
 
-special = [
-    '!','@','#',
-    '$','%','&',
-    '*','(',')',
-    '-','_','=',
-    '+','{','}',
-    '|',';',':',
-    '"','<','>',
-    '.','?','/',
-    '`','~','#'
-]
+
+
 
 def clear_screen():
 ### check operative system ###
@@ -101,6 +90,19 @@ def clear_screen():
     else:
         os.system('clear')
 
+def check_response(variable:str, character:str):
+    if variable.lower() == "si":
+        variable = True
+        return variable
+    
+    elif variable.lower() == "no":
+        variable = False
+        return variable
+    else:
+        input(f"""{f_.RED}respuesta no valida, intenta de nuevo respondiendo si o no. (si quieres salir presiona ctrl + C)
+                {f_.BLUE}presiona enter para continuar\n{f_.RESET}""")
+        variable = input(f"Quieres que la contraseña contenga {character} ?\n") 
+        return check_response(variable,character) 
 def main():
     
     clear_screen()
@@ -110,10 +112,20 @@ def main():
         print(f"Presion {f_.MAGENTA}CTRL + C{f_.RESET} para salir del programa")
         
         try:
+            #* Request Data
             length_password = int(input("Ingresa la longitud que quieres para la password: "))
 
-            ### Creation object ###
-            generator = Password_Generator(length_password, alphabet_lower, alphabet_upper, special)
+            uppercase = input("Quieres que la contraseña tenga mayusculas ? \n")
+            uppercase = check_response(uppercase, "letras mayusculas")
+            
+            special = input("Quieres que la contraseña tenga caracteres especiales ? \n")
+            special = check_response(special,"caracteres especiales")
+
+            numbers = input("Quieres que la contraseña tenga numeros ? \n")
+            numbers = check_response(numbers, "numeros")
+            
+            #*## Creation object ###
+            generator = Password_Generator(length_password, uppercase, special, numbers)
             print(generator.password_creator())
 
         except ValueError:
